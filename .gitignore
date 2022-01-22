@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules/
+
+# lib directorie
+lib/
+
+# Logs
+yarn-error.log
