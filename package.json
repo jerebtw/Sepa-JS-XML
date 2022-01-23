@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": "https://github.com/jerebtw/SepaJS.git",
+  "repository": "https://github.com/jerebtw/Sepa-JS-XML.git",
   "author": "Jerebtw <jeremialp41@gmail.com>",
   "license": "MIT",
   "files": [
