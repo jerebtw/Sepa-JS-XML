@@ -4,11 +4,8 @@ import { DeclarationAttributes, ElementCompact, js2xml } from "xml-js";
 export interface Payment {
   /** Max length is 35 */
   id: string;
-  /** The name of the debtor */
   name: string;
-  /** The IBAN of the debtor */
   iban: string;
-  /** The BIC of the debtor */
   bic: string;
   mandateId?: string;
   mandateSignatureDate?: Date;
@@ -26,24 +23,19 @@ export interface CreditorPayments {
   requestedExecutionDate: Date;
   collectionDate?: Date;
 
-  creditor: {
-    id?: string;
-    name: string;
-    iban: string;
-    bic: string;
-  };
+  name: string;
+  iban: string;
+  bic: string;
 
   payments: Payment[];
 }
 
 export interface SepaData {
-  xmlData?: {
-    painVersion?: PAIN_VERSIONS;
-    xmlVersion?: string;
-    xmlEncoding?: string;
-    xsiNamespace?: string;
-    xsiXmls?: string;
-  };
+  painVersion?: PAIN_VERSIONS;
+  xmlVersion?: string;
+  xmlEncoding?: string;
+  xsiNamespace?: string;
+  xsiXmls?: string;
 
   localInstrumentation?: LOCAL_INSTRUMENTATION;
   sequenceType?: SEQUENCE_TYPE;
@@ -69,6 +61,17 @@ export enum PAIN_VERSIONS {
   "pain.008.003.01" = "pain.008.003.01",
   "pain.008.001.02" = "pain.008.001.02",
   "pain.008.003.02" = "pain.008.003.02",
+}
+
+enum PAIN_TYPES {
+  "pain.001.001.02" = "pain.001.001.02",
+  "pain.001.003.02" = "pain.001.003.02",
+  "pain.001.001.03" = "CstmrCdtTrfInitn",
+  "pain.001.003.03" = "CstmrCdtTrfInitn",
+  "pain.008.001.01" = "pain.008.001.01",
+  "pain.008.003.01" = "pain.008.003.01",
+  "pain.008.001.02" = "CstmrDrctDbtInitn",
+  "pain.008.003.02" = "CstmrDrctDbtInitn",
 }
 
 export enum LOCAL_INSTRUMENTATION {
@@ -97,7 +100,7 @@ export default function createSepaXML(
   sepaData: SepaData,
   prettyPrint?: boolean,
 ): string {
-  const painFormat = sepaData.xmlData?.painVersion ?? PAIN_VERSION;
+  const painFormat = sepaData.painVersion ?? PAIN_VERSION;
   const painVersion =
     parseInt(
       painFormat.substring(painFormat.length, painFormat.length - 2),
@@ -106,8 +109,8 @@ export default function createSepaXML(
 
   const declaration: { _attributes: DeclarationAttributes } = {
     _attributes: {
-      version: sepaData.xmlData?.xmlVersion ?? XML_VERSION,
-      encoding: sepaData.xmlData?.xmlEncoding ?? XML_ENCODING,
+      version: sepaData.xmlVersion ?? XML_VERSION,
+      encoding: sepaData.xmlEncoding ?? XML_ENCODING,
     },
   };
 
@@ -116,41 +119,42 @@ export default function createSepaXML(
 
   const Document: ElementCompact = {
     _attributes: {
-      xmlns: `${sepaData.xmlData?.xsiXmls ?? XSI_XMLS}${painFormat}`,
-      "xmlns:xsi": sepaData.xmlData?.xsiNamespace ?? XSI_NAMESPACE,
-      "xmlns:schemaLocation": `${
-        sepaData.xmlData?.xsiXmls ?? XSI_XMLS
+      xmlns: `${sepaData.xsiXmls ?? XSI_XMLS}${painFormat}`,
+      "xmlns:xsi": sepaData.xsiNamespace ?? XSI_NAMESPACE,
+      "xsi:schemaLocation": `${
+        sepaData.xsiXmls ?? XSI_XMLS
       }${painFormat} ${painFormat}.xsd`,
-    },
-    CstmrCdtTrfInitn: {
-      GrpHdr: {
-        MsgId: sepaData.id,
-        CreDtTm: sepaData.creationDate.toISOString().substring(0, 19),
-        NbOfTxs: sepaData.positions.reduce(
-          (sum, item) => sum + item.payments.length,
-          0,
-        ),
-        CtrlSum: sepaData.positions
-          .reduce(
-            (sum, item) =>
-              sum +
-              item.payments.reduce((sum, payment) => sum + payment.amount, 0),
-            0,
-          )
-          .toFixed(2),
-        InitgPty: {
-          Nm: sepaData.initiatorName,
-        },
-      },
-      PmtInf: getPmtInf(sepaData, painFormat, painVersion),
     },
   };
 
+  Document[PAIN_TYPES[painFormat]] = {
+    GrpHdr: {
+      MsgId: sepaData.id,
+      CreDtTm: sepaData.creationDate.toISOString().substring(0, 19),
+      NbOfTxs: sepaData.positions.reduce(
+        (sum, item) => sum + item.payments.length,
+        0,
+      ),
+      CtrlSum: sepaData.positions
+        .reduce(
+          (sum, item) =>
+            sum +
+            item.payments.reduce((sum, payment) => sum + payment.amount, 0),
+          0,
+        )
+        .toFixed(2),
+      InitgPty: {
+        Nm: sepaData.initiatorName,
+      },
+    },
+    PmtInf: getPmtInf(sepaData, painFormat, painVersion),
+  };
+
   if (painVersion === 2) {
-    Document.CstmrCdtTrfInitn.GrpHdr.BtchBookg = (
+    Document[PAIN_TYPES[painFormat]].GrpHdr.BtchBookg = (
       sepaData.batchBooking ?? false
     ).toString();
-    Document.CstmrCdtTrfInitn.GrpHdr.Grpg = "MIXD";
+    Document[PAIN_TYPES[painFormat]].GrpHdr.Grpg = "MIXD";
   }
 
   return js2xml(
@@ -166,11 +170,7 @@ const getPmtInf = (
 ) =>
   sepaData.positions.map((item, index) => {
     checkLength(item.id, `sepaData.positions[${index}].id`, 35);
-    checkLength(
-      item.creditor.name,
-      `sepaData.positions[${index}].creditor.name`,
-      70,
-    );
+    checkLength(item.name, `sepaData.positions[${index}].name`, 70);
 
     const pmtMtd = painFormat.indexOf("pain.001") === 0 ? "TRF" : "DD";
 
@@ -199,19 +199,19 @@ const getPmtInf = (
         .substring(0, 10);
 
       pmtInfData.Cdtr = {
-        Nm: item.creditor.name,
+        Nm: item.name,
       };
       pmtInfData.CdtrAcct = {
         Id: {
-          IBAN: item.creditor.iban,
+          IBAN: item.iban,
         },
       };
-      pmtInfData.CdtrAgt = { FinInstnId: { BIC: item.creditor.bic } };
+      pmtInfData.CdtrAgt = { FinInstnId: { BIC: item.bic } };
       pmtInfData.CdtrSchmeId = {
         Id: {
           PrvtId: {
             Othr: {
-              Id: item.creditor.id ?? "",
+              Id: item.id ?? "",
               SchmeNm: {
                 Prtry: "SEPA",
               },
@@ -225,14 +225,14 @@ const getPmtInf = (
         .substring(0, 10);
 
       pmtInfData.Dbtr = {
-        Nm: item.creditor.name,
+        Nm: item.name,
       };
       pmtInfData.DbtrAcct = {
         Id: {
-          IBAN: item.creditor.iban,
+          IBAN: item.iban,
         },
       };
-      pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.creditor.bic } };
+      pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
     }
 
     pmtInfData.CdtTrfTxInf = getPayments(item.payments, index, pmtMtd);
@@ -269,10 +269,11 @@ const getPayments = (
     }
 
     if (pmtMtd === "DD") {
-      paymentData.InstdAmt = {
+      paymentData.Amt = {
         _attributes: { Ccy: "EUR" },
-        _text: payment.amount.toFixed(2),
+        InstdAmt: payment.amount.toFixed(2),
       };
+
       paymentData.DrctDbtTx = {
         MndtRltdInf: {
           MndtId: payment.mandateId ?? "",
@@ -292,8 +293,10 @@ const getPayments = (
       paymentData.Dbtr = { Nm: payment.name };
     } else {
       paymentData.Amt = {
-        _attributes: { Ccy: "EUR" },
-        InstdAmt: payment.amount.toFixed(2),
+        InstdAmt: {
+          _attributes: { Ccy: "EUR" },
+          _text: payment.amount.toFixed(2),
+        },
       };
 
       paymentData.CdtrAcct = {
