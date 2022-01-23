@@ -18,11 +18,9 @@ createSepaXML({
   initiatorName: "Test",
   positions: [
     {
-      creditor: {
-        name: "Test",
-        iban: "",
-        bic: "",
-      },
+      name: "Test",
+      iban: "",
+      bic: "",
       requestedExecutionDate: new Date(2022, 5, 16, 0, 0),
       id: "123",
       payments: [
