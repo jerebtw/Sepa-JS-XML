@@ -11,6 +11,8 @@ export interface Payment {
   mandateSignatureDate?: Date;
 
   amount: number;
+  /** Default is "EUR" */
+  currency?: string;
   remittanceInformation: string;
   end2endReference?: string;
 }
@@ -270,7 +272,7 @@ const getPayments = (
 
     if (pmtMtd === "DD") {
       paymentData.Amt = {
-        _attributes: { Ccy: "EUR" },
+        _attributes: { Ccy: payment.currency || "EUR" },
         InstdAmt: payment.amount.toFixed(2),
       };
 
@@ -294,7 +296,7 @@ const getPayments = (
     } else {
       paymentData.Amt = {
         InstdAmt: {
-          _attributes: { Ccy: "EUR" },
+          _attributes: { Ccy: payment.currency || "EUR" },
           _text: payment.amount.toFixed(2),
         },
       };
