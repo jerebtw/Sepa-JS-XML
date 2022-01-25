@@ -25,7 +25,7 @@ createSepaXML({
       id: "123",
       payments: [
         {
-          id: "Payment 1 ",
+          id: "Payment 1",
           amount: 123,
           iban: "",
           bic: "",
