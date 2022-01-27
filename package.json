@@ -18,8 +18,10 @@
     "branch": "main"
   },
   "scripts": {
-    "watch": "tsc -w",
-    "build": "tsc",
+    "watch": "yarn build:swc -w",
+    "build": "yarn build:ts && yarn build:swc",
+    "build:ts": "tsc -d",
+    "build:swc": "swc src/index.ts -o lib/index.js",
     "format:test": "prettier --check \"src/**/*.{ts,tsx}\"",
     "format:write": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src/**/*.ts",
@@ -31,6 +33,7 @@
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
+    "@swc/core": "^1.2.135",
     "@types/jest": "^27.4.0",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
