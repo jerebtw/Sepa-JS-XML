@@ -6,3 +6,6 @@ lib/
 
 # Logs
 yarn-error.log
+
+# Docs
+docs/
