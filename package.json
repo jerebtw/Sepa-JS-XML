@@ -4,7 +4,7 @@
     "sepa",
     "xml"
   ],
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": "https://github.com/jerebtw/Sepa-JS-XML.git",
