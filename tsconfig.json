@@ -2,13 +2,14 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
-    "declaration": true,
-    "outDir": "./lib",
     "newLine": "lf",
+    "outDir": "lib",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "declaration": true,
   },
   "exclude": [
     "**/*.test.ts",

@@ -7,6 +7,10 @@ Note that this library has not been tested 100%
 If you find a problem, please report it
 ```
 
+## Documentation
+
+You can find the [Docs](https://jerebtw.github.io/Sepa-JS-XML/) here
+
 ## Example
 
 ```ts
