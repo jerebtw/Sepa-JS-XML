@@ -98,7 +98,7 @@ const XML_VERSION = "1.0";
 const XML_ENCODING = "UTF-8";
 //#endregion
 
-export default function createSepaXML(
+export function createSepaXML(
   sepaData: SepaData,
   prettyPrint?: boolean,
 ): string {

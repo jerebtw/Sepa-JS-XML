@@ -1,4 +1,4 @@
-import createSepaXML, { PAIN_VERSIONS } from "./index";
+import { createSepaXML, PAIN_VERSIONS } from "./index";
 
 describe("createSepaXML", () => {
   it("check valid xml", () => {
