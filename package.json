@@ -32,17 +32,17 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "eslint": "^8.12.0",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint": "^8.14.0",
     "gh-pages": "^3.2.3",
     "gzip-size-cli": "^5.1.0",
     "jest": "^27.5.1",
-    "prettier": "^2.6.1",
-    "terser": "^5.12.1",
+    "prettier": "^2.6.2",
+    "terser": "^5.13.1",
     "ts-jest": "^27.1.4",
-    "typedoc": "^0.22.13",
-    "typescript": "^4.6.3"
+    "typedoc": "^0.22.15",
+    "typescript": "^4.6.4"
   },
   "dependencies": {
     "xml-js": "^1.6.11"

@@ -165,17 +165,16 @@ export function createSepaXML(
   );
 }
 
-const getPmtInf = (
+function getPmtInf(
   sepaData: SepaData,
   painFormat: PAIN_VERSIONS,
   painVersion: number,
-) =>
-  sepaData.positions.map((item, index) => {
+) {
+  return sepaData.positions.map((item, index) => {
     checkLength(item.id, `sepaData.positions[${index}].id`, 35);
     checkLength(item.name, `sepaData.positions[${index}].name`, 70);
 
     const pmtMtd = painFormat.indexOf("pain.001") === 0 ? "TRF" : "DD";
-
     const pmtInfData: ElementCompact = {
       PmtInfId: item.id,
       PmtMtd: pmtMtd,
@@ -241,13 +240,10 @@ const getPmtInf = (
 
     return pmtInfData;
   });
+}
 
-const getPayments = (
-  payments: Payment[],
-  index: number,
-  pmtMtd: "TRF" | "DD",
-) =>
-  payments.map((payment, paymentIndex) => {
+function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
+  return payments.map((payment, paymentIndex) => {
     checkLength(
       payment.id,
       `sepaData.positions[${index}].payments[${paymentIndex}].id`,
@@ -314,6 +310,7 @@ const getPayments = (
 
     return paymentData;
   });
+}
 
 function checkLength(value: string, name: string, length: number) {
   if (value.length > length) {
