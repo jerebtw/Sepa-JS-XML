@@ -1,6 +1,6 @@
 # Sepa JS XML
 
-This is a libary to generate SEPA xml files.
+This is a library to generate SEPA xml files.
 
 ```
 Note that this library has not been tested 100%
