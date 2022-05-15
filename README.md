@@ -2,7 +2,7 @@
 
 This is a library to generate SEPA xml files.
 
-```
+```text
 Note that this library has not been tested 100%
 If you find a problem, please report it
 ```
