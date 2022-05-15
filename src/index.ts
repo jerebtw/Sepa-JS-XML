@@ -1,6 +1,29 @@
-import { DeclarationAttributes, ElementCompact, js2xml } from "xml-js";
+import {
+  type DeclarationAttributes,
+  type ElementCompact,
+  js2xml,
+} from "xml-js";
+import { isValidIBAN, isValidBIC } from "ibantools";
 
 //#region Interfaces
+export interface Options {
+  /**
+   * If the xml should be pretty printed
+   * @default false
+   */
+  prettyPrint?: boolean;
+  /**
+   * Check if the IBAN is valid. (with IBANTools)
+   * @default true
+   */
+  checkIBAN?: boolean;
+  /**
+   * Check if the BIC is valid. (with IBANTools)
+   * @default true
+   */
+  checkBIC?: boolean;
+}
+
 export interface Payment {
   /** Max length is 35 */
   id: string;
@@ -53,18 +76,7 @@ export interface SepaData {
 }
 //#endregion
 
-//#region enum
-export enum PAIN_VERSIONS {
-  "pain.001.001.02" = "pain.001.001.02",
-  "pain.001.003.02" = "pain.001.003.02",
-  "pain.001.001.03" = "pain.001.001.03",
-  "pain.001.003.03" = "pain.001.003.03",
-  "pain.008.001.01" = "pain.008.001.01",
-  "pain.008.003.01" = "pain.008.003.01",
-  "pain.008.001.02" = "pain.008.001.02",
-  "pain.008.003.02" = "pain.008.003.02",
-}
-
+//#region enum | type
 enum PAIN_TYPES {
   "pain.001.001.02" = "pain.001.001.02",
   "pain.001.003.02" = "pain.001.003.02",
@@ -76,31 +88,37 @@ enum PAIN_TYPES {
   "pain.008.003.02" = "CstmrDrctDbtInitn",
 }
 
-export enum LOCAL_INSTRUMENTATION {
-  "CORE" = "CORE",
-  "COR1" = "COR1",
-  "B2B" = "B2B",
-}
+export type PAIN_VERSIONS =
+  | "pain.001.001.02"
+  | "pain.001.003.02"
+  | "pain.001.001.03"
+  | "pain.001.003.03"
+  | "pain.008.001.01"
+  | "pain.008.003.01"
+  | "pain.008.001.02"
+  | "pain.008.003.02";
 
-export enum SEQUENCE_TYPE {
-  "FRST" = "FRST",
-  "RCUR" = "RCUR",
-  "OOFF" = "OOFF",
-  "FNAL" = "FNAL",
-}
+export type LOCAL_INSTRUMENTATION = "CORE" | "COR1" | "B2B";
+export type SEQUENCE_TYPE = "FRST" | "RCUR" | "OOFF" | "FNAL";
 //#endregion
 
 //#region const
 const XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
 const XSI_XMLS = "urn:iso:std:iso:20022:tech:xsd:";
-const PAIN_VERSION = PAIN_VERSIONS["pain.001.001.03"];
+const PAIN_VERSION = "pain.001.001.03";
 const XML_VERSION = "1.0";
 const XML_ENCODING = "UTF-8";
 //#endregion
 
+/**
+ * Generate a SEPA XML file
+ *
+ * If the length of the values is longer than the max length, it will throw an error
+ * or if checkIBAN or checkBIC is true, it will check if the IBAN or BIC is valid and throw an error if it is not
+ */
 export function createSepaXML(
   sepaData: SepaData,
-  prettyPrint?: boolean,
+  options: Options = { prettyPrint: false, checkBIC: true, checkIBAN: true },
 ): string {
   const painFormat = sepaData.painVersion ?? PAIN_VERSION;
   const painVersion =
@@ -149,7 +167,7 @@ export function createSepaXML(
         Nm: sepaData.initiatorName,
       },
     },
-    PmtInf: getPmtInf(sepaData, painFormat, painVersion),
+    PmtInf: getPmtInf(sepaData, painFormat, painVersion, options),
   };
 
   if (painVersion === 2) {
@@ -161,7 +179,7 @@ export function createSepaXML(
 
   return js2xml(
     { _declaration: declaration, Document },
-    { compact: true, spaces: prettyPrint ? 2 : undefined },
+    { compact: true, spaces: options?.prettyPrint ? 2 : undefined },
   );
 }
 
@@ -169,10 +187,22 @@ function getPmtInf(
   sepaData: SepaData,
   painFormat: PAIN_VERSIONS,
   painVersion: number,
+  options: Options,
 ) {
   return sepaData.positions.map((item, index) => {
     checkLength(item.id, `sepaData.positions[${index}].id`, 35);
     checkLength(item.name, `sepaData.positions[${index}].name`, 70);
+    if (options?.checkIBAN && !isValidIBAN(item.iban)) {
+      throw new Error(
+        `sepaData.positions[${index}].iban is not valid (${item.iban})`,
+      );
+    }
+
+    if (options?.checkBIC && !isValidBIC(item.bic)) {
+      throw new Error(
+        `sepaData.positions[${index}].bic is not valid (${item.bic})`,
+      );
+    }
 
     const pmtMtd = painFormat.indexOf("pain.001") === 0 ? "TRF" : "DD";
     const pmtInfData: ElementCompact = {
@@ -246,12 +276,12 @@ function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
   return payments.map((payment, paymentIndex) => {
     checkLength(
       payment.id,
-      `sepaData.positions[${index}].payments[${paymentIndex}].id`,
+      `sepaData.positions[${index}].payments[${paymentIndex}].id (${payment.id})`,
       35,
     );
     checkLength(
       payment.name,
-      `sepaData.positions[${index}].payments[${paymentIndex}].name`,
+      `sepaData.positions[${index}].payments[${paymentIndex}].name (${payment.name})`,
       35,
     );
 
@@ -314,6 +344,6 @@ function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
 
 function checkLength(value: string, name: string, length: number) {
   if (value.length > length) {
-    throw new Error(`Max length for ${name} is ${length}`);
+    throw new Error(`Max length for ${name} is ${length} (${value})`);
   }
 }

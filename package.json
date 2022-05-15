@@ -31,20 +31,21 @@
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.1",
-    "@typescript-eslint/eslint-plugin": "^5.21.0",
-    "@typescript-eslint/parser": "^5.21.0",
-    "eslint": "^8.14.0",
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
     "gh-pages": "^4.0.0",
     "gzip-size-cli": "^5.1.0",
-    "jest": "^27.5.1",
+    "jest": "^28.1.0",
     "prettier": "^2.6.2",
     "terser": "^5.13.1",
-    "ts-jest": "^27.1.4",
+    "ts-jest": "^28.0.2",
     "typedoc": "^0.22.15",
     "typescript": "^4.6.4"
   },
   "dependencies": {
+    "ibantools": "^4.1.5",
     "xml-js": "^1.6.11"
   }
 }
