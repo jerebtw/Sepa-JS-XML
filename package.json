@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/jest": "^27.5.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
+    "@typescript-eslint/parser": "^5.27.1",
     "eslint": "^8.15.0",
     "gh-pages": "^4.0.0",
     "gzip-size-cli": "^5.1.0",
