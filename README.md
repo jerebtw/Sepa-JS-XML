@@ -9,12 +9,12 @@ If you find a problem, please report it
 
 ## Documentation
 
-You can find the [Docs](https://jerebtw.github.io/Sepa-JS-XML/) here
+You can find the [Docs](https://sepa-js.jerebtw.de/) here
 
 ## Example
 
 ```ts
-import createSepaXML from "sepa-js-xml";
+import { createSepaXML } from "sepa-js-xml";
 
 createSepaXML({
   id: "1",
