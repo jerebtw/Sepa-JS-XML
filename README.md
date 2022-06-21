@@ -9,7 +9,7 @@ If you find a problem, please report it
 
 ## Documentation
 
-You can find the [Docs](https://sepa-js.jerebtw.de/) here
+You can find the [Docs](https://sepa-js-xml.jerebtw.de/) here
 
 ## Example
 
