@@ -17,7 +17,7 @@
     "size": "echo index && gzip-size lib/index.js && echo index.min && gzip-size lib/index.min.js",
     "build": "yarn ts && yarn minify",
     "minify": "terser lib/index.js -o lib/index.min.js -c --keep-fnames",
-    "ts": "tsc && cd lib && copy index.d.ts index.min.d.ts",
+    "ts": "tsc && cd lib && cp index.d.ts index.min.d.ts",
     "docs": "typedoc src/index.ts --name \"Sepa JS XML\"",
     "deploy:docs": "yarn docs && gh-pages -d docs",
     "format:test": "prettier --check \"src/**/*.{ts,tsx}\"",

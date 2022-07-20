@@ -1,0 +1,93 @@
+{
+  // These tasks will run in order when initializing your CodeSandbox project.
+  "setupTasks": [
+    {
+      "name": "Install Dependencies",
+      "command": "yarn install"
+    }
+  ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
+  "tasks": {
+    "size": {
+      "name": "size",
+      "command": "yarn size",
+      "runAtStart": false
+    },
+    "build": {
+      "name": "build",
+      "command": "yarn build",
+      "runAtStart": false
+    },
+    "minify": {
+      "name": "minify",
+      "command": "yarn minify",
+      "runAtStart": false
+    },
+    "ts": {
+      "name": "ts",
+      "command": "yarn ts",
+      "runAtStart": false
+    },
+    "docs": {
+      "name": "docs",
+      "command": "yarn docs",
+      "runAtStart": false
+    },
+    "deploy:docs": {
+      "name": "deploy:docs",
+      "command": "yarn deploy:docs",
+      "runAtStart": false
+    },
+    "format:test": {
+      "name": "format:test",
+      "command": "yarn format:test",
+      "runAtStart": false
+    },
+    "format:write": {
+      "name": "format:write",
+      "command": "yarn format:write",
+      "runAtStart": false
+    },
+    "lint": {
+      "name": "lint",
+      "command": "yarn lint",
+      "runAtStart": false
+    },
+    "test": {
+      "name": "test",
+      "command": "yarn test",
+      "runAtStart": false
+    },
+    "prepare": {
+      "name": "prepare",
+      "command": "yarn prepare",
+      "runAtStart": false
+    },
+    "prepublishOnly": {
+      "name": "prepublishOnly",
+      "command": "yarn prepublishOnly",
+      "runAtStart": false
+    },
+    "preversion": {
+      "name": "preversion",
+      "command": "yarn preversion",
+      "runAtStart": false
+    },
+    "version": {
+      "name": "version",
+      "command": "yarn version",
+      "runAtStart": false
+    },
+    "postversion": {
+      "name": "postversion",
+      "command": "yarn postversion",
+      "runAtStart": false
+    },
+    "yarn install": {
+      "name": "yarn install",
+      "command": "yarn install",
+      "runAtStart": true
+    }
+  }
+}
