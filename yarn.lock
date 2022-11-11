@@ -1773,10 +1773,10 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-ibantools@^4.1.6:
-  version "4.1.6"
-  resolved "https://registry.yarnpkg.com/ibantools/-/ibantools-4.1.6.tgz#a0204c24967676d1200fcd3b402f65c89e6c0010"
-  integrity sha512-BpIqMJj6tgFbx1YmH7tjstiqf8VgLkGL2d3K7XSOuGxbdy6gv6ovKjC/Yqgrh3OEeqeSzx8fVu5P96Q1bWg2bg==
+ibantools@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/ibantools/-/ibantools-4.2.0.tgz#93b79e714e20645f0636fb95ba0fb53a3111ca17"
+  integrity sha512-DrEqx5sPUCfYFWgrFRPl4NvMbo6rWbsqAbX60btB2K1DNpiKA+4bDKp5zSaX6H30cm0GzeMvGM9ck3zLpRFZzQ==
 
 ignore@^5.2.0:
   version "5.2.0"
