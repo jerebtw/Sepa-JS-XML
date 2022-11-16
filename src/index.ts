@@ -276,12 +276,12 @@ function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
   return payments.map((payment, paymentIndex) => {
     checkLength(
       payment.id,
-      `sepaData.positions[${index}].payments[${paymentIndex}].id (${payment.id})`,
+      `sepaData.positions[${index}].payments[${paymentIndex}].id`,
       35,
     );
     checkLength(
       payment.name,
-      `sepaData.positions[${index}].payments[${paymentIndex}].name (${payment.name})`,
+      `sepaData.positions[${index}].payments[${paymentIndex}].name`,
       35,
     );
 
