@@ -208,17 +208,17 @@ function getPmtInf(
     const pmtInfData: ElementCompact = {
       PmtInfId: item.id,
       PmtMtd: pmtMtd,
+      BtchBookg:
+        painVersion === 3 ? (item.batchBooking ?? false).toString() : undefined,
+      NbOfTxs: painVersion === 3 ? item.payments.length : undefined,
+      CtrlSum:
+        painVersion === 3
+          ? item.payments
+              .reduce((sum, payment) => sum + payment.amount, 0)
+              .toFixed(2)
+          : undefined,
       PmtTpInf: { SvcLvl: { Cd: "SEPA" } },
-      ChrgBr: "SLEV",
     };
-
-    if (painVersion === 3) {
-      pmtInfData.BtchBookg = (item.batchBooking ?? false).toString();
-      pmtInfData.NbOfTxs = item.payments.length;
-      pmtInfData.CtrlSum = item.payments
-        .reduce((sum, payment) => sum + payment.amount, 0)
-        .toFixed(2);
-    }
 
     if (pmtMtd === "DD") {
       pmtInfData.PmtTpInf.LclInstrm = {
@@ -266,13 +266,25 @@ function getPmtInf(
       pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
     }
 
-    pmtInfData.CdtTrfTxInf = getPayments(item.payments, index, pmtMtd);
+    pmtInfData.ChrgBr = "SLEV";
+
+    pmtInfData.CdtTrfTxInf = getPayments(
+      item.payments,
+      painFormat,
+      index,
+      pmtMtd,
+    );
 
     return pmtInfData;
   });
 }
 
-function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
+function getPayments(
+  payments: Payment[],
+  painFormat: PAIN_VERSIONS,
+  index: number,
+  pmtMtd: "TRF" | "DD",
+) {
   return payments.map((payment, paymentIndex) => {
     checkLength(
       payment.id,
@@ -289,11 +301,14 @@ function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
       PmtId: {
         InstrId: payment.id,
       },
-      RmtInf: { Ustrd: payment.remittanceInformation },
     };
 
     if (payment.end2endReference) {
       paymentData.PmtId.EndToEndId = payment.end2endReference;
+    } else if (PAIN_TYPES[painFormat] === PAIN_TYPES["pain.001.001.03"]) {
+      throw new Error(
+        `sepaData.positions[${index}].payments[${paymentIndex}].end2endReference is required with the selected pain version`,
+      );
     }
 
     if (pmtMtd === "DD") {
@@ -327,16 +342,18 @@ function getPayments(payments: Payment[], index: number, pmtMtd: "TRF" | "DD") {
         },
       };
 
+      paymentData.CdtrAgt = {
+        FinInstnId: { BIC: payment.bic },
+      };
+      paymentData.Cdtr = { Nm: payment.name };
       paymentData.CdtrAcct = {
         Id: {
           IBAN: payment.iban,
         },
       };
-      paymentData.CdtrAgt = {
-        FinInstnId: { BIC: payment.bic },
-      };
-      paymentData.Cdtr = { Nm: payment.name };
     }
+
+    paymentData.RmtInf = { Ustrd: payment.remittanceInformation };
 
     return paymentData;
   });
