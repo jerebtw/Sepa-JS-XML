@@ -118,13 +118,13 @@ const XML_ENCODING = "UTF-8";
  */
 export function createSepaXML(
   sepaData: SepaData,
-  options: Options = { prettyPrint: false, checkBIC: true, checkIBAN: true },
+  options: Options = { prettyPrint: false, checkBIC: true, checkIBAN: true }
 ): string {
   const painFormat = sepaData.painVersion ?? PAIN_VERSION;
   const painVersion =
     parseInt(
       painFormat.substring(painFormat.length, painFormat.length - 2),
-      10,
+      10
     ) + (painFormat.indexOf("pain.008") === 0 ? 1 : 0);
 
   const declaration: { _attributes: DeclarationAttributes } = {
@@ -153,14 +153,14 @@ export function createSepaXML(
       CreDtTm: sepaData.creationDate.toISOString().substring(0, 19),
       NbOfTxs: sepaData.positions.reduce(
         (sum, item) => sum + item.payments.length,
-        0,
+        0
       ),
       CtrlSum: sepaData.positions
         .reduce(
           (sum, item) =>
             sum +
             item.payments.reduce((sum, payment) => sum + payment.amount, 0),
-          0,
+          0
         )
         .toFixed(2),
       InitgPty: {
@@ -179,7 +179,7 @@ export function createSepaXML(
 
   return js2xml(
     { _declaration: declaration, Document },
-    { compact: true, spaces: options?.prettyPrint ? 2 : undefined },
+    { compact: true, spaces: options?.prettyPrint ? 2 : undefined }
   );
 }
 
@@ -187,20 +187,20 @@ function getPmtInf(
   sepaData: SepaData,
   painFormat: PAIN_VERSIONS,
   painVersion: number,
-  options: Options,
+  options: Options
 ) {
   return sepaData.positions.map((item, index) => {
     checkLength(item.id, `sepaData.positions[${index}].id`, 35);
     checkLength(item.name, `sepaData.positions[${index}].name`, 70);
     if (options?.checkIBAN && !isValidIBAN(item.iban)) {
       throw new Error(
-        `sepaData.positions[${index}].iban is not valid (${item.iban})`,
+        `sepaData.positions[${index}].iban is not valid (${item.iban})`
       );
     }
 
     if (options?.checkBIC && !isValidBIC(item.bic)) {
       throw new Error(
-        `sepaData.positions[${index}].bic is not valid (${item.bic})`,
+        `sepaData.positions[${index}].bic is not valid (${item.bic})`
       );
     }
 
@@ -272,7 +272,7 @@ function getPmtInf(
       item.payments,
       painFormat,
       index,
-      pmtMtd,
+      pmtMtd
     );
 
     return pmtInfData;
@@ -283,18 +283,18 @@ function getPayments(
   payments: Payment[],
   painFormat: PAIN_VERSIONS,
   index: number,
-  pmtMtd: "TRF" | "DD",
+  pmtMtd: "TRF" | "DD"
 ) {
   return payments.map((payment, paymentIndex) => {
     checkLength(
       payment.id,
       `sepaData.positions[${index}].payments[${paymentIndex}].id`,
-      35,
+      35
     );
     checkLength(
       payment.name,
       `sepaData.positions[${index}].payments[${paymentIndex}].name`,
-      35,
+      35
     );
 
     const paymentData: ElementCompact = {
@@ -307,7 +307,7 @@ function getPayments(
       paymentData.PmtId.EndToEndId = payment.end2endReference;
     } else if (PAIN_TYPES[painFormat] === PAIN_TYPES["pain.001.001.03"]) {
       throw new Error(
-        `sepaData.positions[${index}].payments[${paymentIndex}].end2endReference is required with the selected pain version`,
+        `sepaData.positions[${index}].payments[${paymentIndex}].end2endReference is required with the selected pain version`
       );
     }
 
