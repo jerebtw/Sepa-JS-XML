@@ -1,5 +1,4 @@
-// import { createSepaXML } from "./index";
-import { createSepaXML } from "../lib/index";
+import { createSepaXML } from "./index";
 
 describe("createSepaXML", () => {
   it("check valid xml", () => {
