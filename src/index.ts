@@ -40,6 +40,21 @@ export interface Payment {
   end2endReference?: string;
 }
 
+export interface GroupHeader {
+  /** Max length is 35 */
+  MsgId: string;
+  CreDtTm: string; // Date YYYY-MM-DDThh:mm:ss
+  NbOfTxs: number;
+  CtrlSum: string; // number
+  BtchBookg?: "true" | "false"; // boolean
+  InitgPty: {
+    /** Min length is 1 */
+    /** Max length is 70 */
+    Nm: string;
+  };
+  Grpg?: "MIXD";
+}
+
 export interface CreditorPayments {
   /** Max length is 35 */
   id: string;
@@ -147,35 +162,41 @@ export function createSepaXML(
     },
   };
 
-  Document[PAIN_TYPES[painFormat]] = {
-    GrpHdr: {
-      MsgId: sepaData.id,
-      CreDtTm: sepaData.creationDate.toISOString().substring(0, 19),
-      NbOfTxs: sepaData.positions.reduce(
-        (sum, item) => sum + item.payments.length,
-        0
-      ),
-      CtrlSum: sepaData.positions
-        .reduce(
-          (sum, item) =>
-            sum +
-            item.payments.reduce((sum, payment) => sum + payment.amount, 0),
-          0
-        )
-        .toFixed(2),
-      InitgPty: {
-        Nm: sepaData.initiatorName,
-      },
-    },
-    PmtInf: getPmtInf(sepaData, painFormat, painVersion, options),
-  };
+  const GrpHdr = {
+    MsgId: sepaData.id,
+    CreDtTm: sepaData.creationDate.toISOString().substring(0, 19),
+  } as GroupHeader;
 
   if (painVersion === 2) {
-    Document[PAIN_TYPES[painFormat]].GrpHdr.BtchBookg = (
-      sepaData.batchBooking ?? false
-    ).toString();
-    Document[PAIN_TYPES[painFormat]].GrpHdr.Grpg = "MIXD";
+    GrpHdr.BtchBookg = (sepaData.batchBooking ?? true).toString() as
+      | "true"
+      | "false";
   }
+
+  GrpHdr.NbOfTxs = sepaData.positions.reduce(
+    (sum, item) => sum + item.payments.length,
+    0
+  );
+  GrpHdr.CtrlSum = sepaData.positions
+    .reduce(
+      (sum, item) =>
+        sum + item.payments.reduce((sum, payment) => sum + payment.amount, 0),
+      0
+    )
+    .toFixed(2);
+
+  if (painVersion === 2) {
+    GrpHdr.Grpg = "MIXD";
+  }
+
+  GrpHdr.InitgPty = {
+    Nm: sepaData.initiatorName,
+  };
+
+  Document[PAIN_TYPES[painFormat]] = {
+    GrpHdr,
+    PmtInf: getPmtInf(sepaData, painFormat, painVersion, options),
+  };
 
   return js2xml(
     { _declaration: declaration, Document },
@@ -208,17 +229,17 @@ function getPmtInf(
     const pmtInfData: ElementCompact = {
       PmtInfId: item.id,
       PmtMtd: pmtMtd,
-      BtchBookg:
-        painVersion === 3 ? (item.batchBooking ?? false).toString() : undefined,
-      NbOfTxs: painVersion === 3 ? item.payments.length : undefined,
-      CtrlSum:
-        painVersion === 3
-          ? item.payments
-              .reduce((sum, payment) => sum + payment.amount, 0)
-              .toFixed(2)
-          : undefined,
-      PmtTpInf: { SvcLvl: { Cd: "SEPA" } },
     };
+
+    if (painVersion === 3) {
+      pmtInfData.BtchBookg = (item.batchBooking ?? true).toString();
+      pmtInfData.NbOfTxs = item.payments.length;
+      pmtInfData.CtrlSum = item.payments
+        .reduce((sum, payment) => sum + payment.amount, 0)
+        .toFixed(2);
+    }
+
+    pmtInfData.PmtTpInf = { SvcLvl: { Cd: "SEPA" } };
 
     if (pmtMtd === "DD") {
       pmtInfData.PmtTpInf.LclInstrm = {
