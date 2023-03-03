@@ -7,6 +7,7 @@ specifiers:
   '@types/jest': ^29.4.0
   '@typescript-eslint/eslint-plugin': ^5.54.0
   '@typescript-eslint/parser': ^5.54.0
+  dayjs: ^1.11.7
   eslint: ^8.35.0
   gh-pages: ^5.0.0
   gzip-size-cli: ^5.1.0
@@ -29,6 +30,7 @@ devDependencies:
   '@types/jest': 29.4.0
   '@typescript-eslint/eslint-plugin': 5.54.0_6mj2wypvdnknez7kws2nfdgupi
   '@typescript-eslint/parser': 5.54.0_ycpbpc6yetojsgtrx3mwntkhsu
+  dayjs: 1.11.7
   eslint: 8.35.0
   gh-pages: 5.0.0
   gzip-size-cli: 5.1.0
@@ -1631,6 +1633,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+    dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
     dev: true
 
   /debug/4.3.4:
