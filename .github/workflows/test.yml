@@ -1,6 +1,6 @@
 name: Test Action
 run-name: Test
-on: [push]
+on: [push, pull_request]
 jobs:
   Test-Actions:
     runs-on: ubuntu-latest
