@@ -10,8 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "removeComments": true
+    "emitDeclarationOnly": true
   },
   "exclude": ["**/*.test.ts", "/lib"],
   "include": ["src/**/*.ts"]
