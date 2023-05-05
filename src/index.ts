@@ -315,7 +315,7 @@ function getPayments(
     checkLength(
       payment.name,
       `sepaData.positions[${index}].payments[${paymentIndex}].name`,
-      35
+      70
     );
 
     const paymentData: ElementCompact = {
