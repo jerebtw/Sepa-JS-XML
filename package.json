@@ -49,7 +49,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "ibantools": "^4.3.3",
+    "ibantools": "^4.3.5",
     "xml-js": "^1.6.11"
   }
 }
