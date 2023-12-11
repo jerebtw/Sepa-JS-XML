@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   ibantools:
-    specifier: ^4.3.3
-    version: 4.3.3
+    specifier: ^4.3.8
+    version: 4.3.8
   xml-js:
     specifier: ^1.6.11
     version: 1.6.11
@@ -2430,8 +2430,8 @@ packages:
     engines: {node: '>=10.17.0'}
     dev: true
 
-  /ibantools@4.3.3:
-    resolution: {integrity: sha512-RUTlGuFj3cU/Qfu5YIrsIZjW34/VDgKOz5fDr64Mc4NWP9b2i48vQ39r5xCl1yyFQeyEG/lASstIQHAUX18rRA==}
+  /ibantools@4.3.8:
+    resolution: {integrity: sha512-YBdswuzvCSn3EyFPKj4aolOaJ8fnQ3m+8bCwTbZJaDg2lMWKlQ4C37PodHCrCh6GmzVPpC7b6H+nKcJTDblu/g==}
     dev: false
 
   /ieee754@1.2.1:
