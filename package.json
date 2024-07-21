@@ -32,7 +32,7 @@
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
-    "@swc/cli": "^0.3.12",
+    "@swc/cli": "^0.4.0",
     "@swc/core": "^1.4.11",
     "@swc/jest": "^0.2.36",
     "@types/bun": "^1.1.6",
