@@ -66,7 +66,8 @@ export interface CreditorPayments {
 
   name: string;
   iban: string;
-  bic: string;
+  /** Optional after 008.001.002 see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
+  bic?: string;
 
   payments: Payment[];
 }
@@ -220,7 +221,8 @@ function getPmtInf(
       );
     }
 
-    if (options?.checkBIC && !isValidBIC(item.bic)) {
+    const bicOptional = PAIN_TYPES[painFormat] === "CstmrCdtTrfInitn";
+    if (options?.checkBIC && (item.bic ? !isValidBIC(item.bic) : bicOptional)) {
       throw new Error(
         `sepaData.positions[${index}].bic is not valid (${item.bic})`,
       );
@@ -285,7 +287,11 @@ function getPmtInf(
           IBAN: item.iban,
         },
       };
-      pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
+      if (item.bic) {
+        pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
+      } else if (bicOptional) {
+        pmtInfData.DbtrAgt = { FinInstnId: null };
+      }
     }
 
     pmtInfData.ChrgBr = "SLEV";
