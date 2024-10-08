@@ -30,6 +30,7 @@ export interface Payment {
   id: string;
   name: string;
   iban: string;
+  /** Optional after 008.001.002 see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
   bic: string;
   mandateId?: string;
   mandateSignatureDate?: Date;
@@ -287,9 +288,9 @@ function getPmtInf(
           IBAN: item.iban,
         },
       };
-      if (item.bic) {
-        pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
-      } else if (bicOptional) {
+
+      pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
+      if (bicOptional && !item.bic) {
         pmtInfData.DbtrAgt = { FinInstnId: null };
       }
     }
@@ -370,9 +371,15 @@ function getPayments(
         },
       };
 
+      const bicOptional = PAIN_TYPES[painFormat] === "CstmrCdtTrfInitn";
       paymentData.CdtrAgt = {
         FinInstnId: { BIC: payment.bic },
       };
+
+      if (!payment.bic && bicOptional) {
+        paymentData.CdtrAgt = { FinInstnId: null };
+      }
+
       paymentData.Cdtr = { Nm: payment.name };
       paymentData.CdtrAcct = {
         Id: {

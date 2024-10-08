@@ -279,6 +279,43 @@ test("issue #287", () => {
   ).toBe(
     `<?xml version="1.0" encoding="UTF-8"?><Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 pain.008.001.02.xsd"><CstmrDrctDbtInitn><GrpHdr><MsgId>Test1345</MsgId><CreDtTm>2022-06-16T00:00:00</CreDtTm><NbOfTxs>1</NbOfTxs><CtrlSum>230.00</CtrlSum><InitgPty><Nm>Test Company</Nm></InitgPty></GrpHdr><PmtInf><PmtInfId>Test123</PmtInfId><PmtMtd>DD</PmtMtd><BtchBookg>false</BtchBookg><NbOfTxs>1</NbOfTxs><CtrlSum>230.00</CtrlSum><PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl><LclInstrm><Cd/></LclInstrm></PmtTpInf><SeqTp/><ReqdColltnDt/><Cdtr><Nm>Pos 1</Nm></Cdtr><CdtrAcct><Id><IBAN>DE02701500000000594937</IBAN></Id></CdtrAcct><CdtrAgt><FinInstnId><BIC>Test</BIC></FinInstnId></CdtrAgt><CdtrSchmeId><Id><PrvtId><Othr><Id>Test123</Id><SchmeNm><Prtry>SEPA</Prtry></SchmeNm></Othr></PrvtId></Id></CdtrSchmeId><ChrgBr>SLEV</ChrgBr><CdtTrfTxInf><PmtId><InstrId>123</InstrId><EndToEndId>lol</EndToEndId></PmtId><Amt Ccy="EUR"><InstdAmt>230.00</InstdAmt></Amt><DrctDbtTx><MndtRltdInf><MndtId/><DtOfSgntr/></MndtRltdInf></DrctDbtTx><DbtrAcct><Id><IBAN>DE02701500000000594937</IBAN></Id></DbtrAcct><DbtrAgt><FinInstnId><BIC>Test</BIC></FinInstnId></DbtrAgt><Dbtr><Nm>Money Company</Nm></Dbtr><RmtInf><Ustrd>Money please</Ustrd></RmtInf></CdtTrfTxInf></PmtInf></CstmrDrctDbtInitn></Document>`,
   );
+  expect(
+    createSepaXML(
+      {
+        painVersion: "pain.008.001.02",
+        id: "Test1345",
+        creationDate: dayjs.utc("2022-06-16").toDate(),
+        initiatorName: "Test Company",
+        positions: [
+          {
+            id: "Test123",
+            batchBooking: false,
+            iban: "DE02701500000000594937",
+            requestedExecutionDate: dayjs.utc("2022-06-16").toDate(),
+            name: "Pos 1",
+            payments: [
+              {
+                id: "123",
+                amount: 230,
+                currency: "EUR",
+                name: "Money Company",
+                iban: "DE02701500000000594937",
+                bic: "Test",
+                remittanceInformation: "Money please",
+                end2endReference: "lol",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        checkIBAN: true,
+        checkBIC: false,
+      },
+    ),
+  ).toBe(
+    `<?xml version="1.0" encoding="UTF-8"?><Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 pain.008.001.02.xsd"><CstmrDrctDbtInitn><GrpHdr><MsgId>Test1345</MsgId><CreDtTm>2022-06-16T00:00:00</CreDtTm><NbOfTxs>1</NbOfTxs><CtrlSum>230.00</CtrlSum><InitgPty><Nm>Test Company</Nm></InitgPty></GrpHdr><PmtInf><PmtInfId>Test123</PmtInfId><PmtMtd>DD</PmtMtd><BtchBookg>false</BtchBookg><NbOfTxs>1</NbOfTxs><CtrlSum>230.00</CtrlSum><PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl><LclInstrm><Cd/></LclInstrm></PmtTpInf><SeqTp/><ReqdColltnDt/><Cdtr><Nm>Pos 1</Nm></Cdtr><CdtrAcct><Id><IBAN>DE02701500000000594937</IBAN></Id></CdtrAcct><CdtrAgt><FinInstnId><BIC/></FinInstnId></CdtrAgt><CdtrSchmeId><Id><PrvtId><Othr><Id>Test123</Id><SchmeNm><Prtry>SEPA</Prtry></SchmeNm></Othr></PrvtId></Id></CdtrSchmeId><ChrgBr>SLEV</ChrgBr><CdtTrfTxInf><PmtId><InstrId>123</InstrId><EndToEndId>lol</EndToEndId></PmtId><Amt Ccy="EUR"><InstdAmt>230.00</InstdAmt></Amt><DrctDbtTx><MndtRltdInf><MndtId/><DtOfSgntr/></MndtRltdInf></DrctDbtTx><DbtrAcct><Id><IBAN>DE02701500000000594937</IBAN></Id></DbtrAcct><DbtrAgt><FinInstnId><BIC>Test</BIC></FinInstnId></DbtrAgt><Dbtr><Nm>Money Company</Nm></Dbtr><RmtInf><Ustrd>Money please</Ustrd></RmtInf></CdtTrfTxInf></PmtInf></CstmrDrctDbtInitn></Document>`,
+  );
   expect(() =>
     createSepaXML(
       {
