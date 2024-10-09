@@ -222,7 +222,7 @@ function getPmtInf(
       );
     }
 
-    const bicOptional = PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn";
+    const bicOptional = PAIN_TYPES[painFormat] === "CstmrCdtTrfInitn";
     if (options?.checkBIC && (item.bic ? !isValidBIC(item.bic) : bicOptional)) {
       throw new Error(
         `sepaData.positions[${index}].bic is not valid (${item.bic})`,
@@ -371,7 +371,7 @@ function getPayments(
         },
       };
 
-      const bicOptional = PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn";
+      const bicOptional = PAIN_TYPES[painFormat] === "CstmrCdtTrfInitn";
       paymentData.CdtrAgt = {
         FinInstnId: { BIC: payment.bic },
       };
