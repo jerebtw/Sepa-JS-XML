@@ -31,7 +31,7 @@ export interface Payment {
   name: string;
   iban: string;
   /** Optional after 008.001.002 see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
-  bic: string;
+  bic?: string;
   mandateId?: string;
   mandateSignatureDate?: Date;
 
