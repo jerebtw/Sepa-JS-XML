@@ -30,7 +30,8 @@ export interface Payment {
   id: string;
   name: string;
   iban: string;
-  bic: string;
+  /** Optional sometimes see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
+  bic?: string;
   mandateId?: string;
   mandateSignatureDate?: Date;
 
@@ -66,7 +67,8 @@ export interface CreditorPayments {
 
   name: string;
   iban: string;
-  bic: string;
+  /** Optional sometimes see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
+  bic?: string;
 
   payments: Payment[];
 }
@@ -220,7 +222,8 @@ function getPmtInf(
       );
     }
 
-    if (options?.checkBIC && !isValidBIC(item.bic)) {
+    const bicOptional = PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn";
+    if (options?.checkBIC && (item.bic ? !isValidBIC(item.bic) : bicOptional)) {
       throw new Error(
         `sepaData.positions[${index}].bic is not valid (${item.bic})`,
       );
@@ -285,7 +288,11 @@ function getPmtInf(
           IBAN: item.iban,
         },
       };
+
       pmtInfData.DbtrAgt = { FinInstnId: { BIC: item.bic } };
+      if (bicOptional && !item.bic) {
+        pmtInfData.DbtrAgt = { FinInstnId: null };
+      }
     }
 
     pmtInfData.ChrgBr = "SLEV";
@@ -364,9 +371,15 @@ function getPayments(
         },
       };
 
+      const bicOptional = PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn";
       paymentData.CdtrAgt = {
         FinInstnId: { BIC: payment.bic },
       };
+
+      if (!payment.bic && bicOptional) {
+        paymentData.CdtrAgt = { FinInstnId: null };
+      }
+
       paymentData.Cdtr = { Nm: payment.name };
       paymentData.CdtrAcct = {
         Id: {

@@ -4,11 +4,13 @@
     "sepa",
     "xml"
   ],
-  "version": "3.0.7",
+  "version": "3.0.8-beta.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "type": "module",
-  "repository": "https://github.com/jerebtw/Sepa-JS-XML.git",
+  "repository": {
+    "url": "git+https://github.com/jerebtw/Sepa-JS-XML.git"
+  },
   "author": "Jerebtw <jeremialp41@gmail.com>",
   "license": "MIT",
   "files": [
@@ -32,14 +34,14 @@
   },
   "devDependencies": {
     "@swc/cli": "^0.4.0",
-    "@swc/core": "^1.7.0",
-    "@types/bun": "^1.1.6",
-    "dayjs": "^1.11.12",
+    "@swc/core": "^1.7.28",
+    "@types/bun": "^1.1.10",
+    "dayjs": "^1.11.13",
     "gh-pages": "^6.1.1",
     "gzip-size-cli": "^5.1.0",
     "prettier": "^3.3.3",
-    "typedoc": "^0.26.5",
-    "typescript": "^5.5.3"
+    "typedoc": "^0.26.7",
+    "typescript": "^5.6.2"
   },
   "dependencies": {
     "ibantools": "^4.5.1",
