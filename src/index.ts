@@ -30,7 +30,7 @@ export interface Payment {
   id: string;
   name: string;
   iban: string;
-  /** Optional after 008.001.002 see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
+  /** Optional sometimes see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
   bic?: string;
   mandateId?: string;
   mandateSignatureDate?: Date;
@@ -67,7 +67,7 @@ export interface CreditorPayments {
 
   name: string;
   iban: string;
-  /** Optional after 008.001.002 see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
+  /** Optional sometimes see https://github.com/jerebtw/Sepa-JS-XML/issues/287 */
   bic?: string;
 
   payments: Payment[];
