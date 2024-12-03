@@ -354,7 +354,7 @@ test("issue #287", () => {
   ).toThrow("sepaData.positions[0].bic is not valid (Test)");
 });
 
-test("BIC is not necessary for SEPA Credit Transfer and SEPA Direct Debit", () => {
+test("BIC is not necessary for SEPA Credit Transfer and SEPA Direct Debit on creditor", () => {
   expect(
     createSepaXML(
       {
