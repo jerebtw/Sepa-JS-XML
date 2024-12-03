@@ -371,7 +371,9 @@ function getPayments(
         },
       };
 
-      const bicOptional = PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn";
+      const bicOptional =
+        PAIN_TYPES[painFormat] === "CstmrDrctDbtInitn" ||
+        PAIN_TYPES[painFormat] === "CstmrCdtTrfInitn";
       paymentData.CdtrAgt = {
         FinInstnId: { BIC: payment.bic },
       };
